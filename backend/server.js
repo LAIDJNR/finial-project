@@ -217,6 +217,16 @@ app.delete('/tasks/:id', requireAuth, async (req, res) => {
     }
 });
 
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+app.get('/', (req, res) => {
+    res.send('Task Manager Backend is running');
 });
+
+// Export the app for Vercel
+module.exports = app;
+
+// Only start the server if this file is run directly (not imported)
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`Server running on http://localhost:${PORT}`);
+    });
+}

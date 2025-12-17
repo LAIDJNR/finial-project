@@ -41,7 +41,7 @@ const Task = mongoose.model('Task', TaskSchema);
 
 // --- Auth Routes ---
 
-app.post('/register', async (req, res) => {
+app.post('/api/register', async (req, res) => {
     try {
         const { username, password } = req.body;
         if (!username || !password) {
@@ -67,7 +67,7 @@ app.post('/register', async (req, res) => {
     }
 });
 
-app.post('/login', async (req, res) => {
+app.post('/api/login', async (req, res) => {
     try {
         const { username, password } = req.body;
         const user = await User.findOne({ username, password });
@@ -88,7 +88,7 @@ app.post('/login', async (req, res) => {
 });
 
 // --- User Stats Route ---
-app.get('/users/me', async (req, res) => {
+app.get('/api/users/me', async (req, res) => {
     try {
         const userId = req.headers['x-user-id'];
         if (!userId) return res.status(401).json({ error: 'Unauthorized' });
@@ -118,7 +118,7 @@ const requireAuth = (req, res, next) => {
     next();
 };
 
-app.get('/tasks', requireAuth, async (req, res) => {
+app.get('/api/tasks', requireAuth, async (req, res) => {
     try {
         const tasks = await Task.find({ userId: req.userId }).sort({ createdAt: -1 });
         const formattedTasks = tasks.map(t => ({
@@ -131,7 +131,7 @@ app.get('/tasks', requireAuth, async (req, res) => {
     }
 });
 
-app.post('/tasks', requireAuth, async (req, res) => {
+app.post('/api/tasks', requireAuth, async (req, res) => {
     try {
         const { title, description, dueDate, category } = req.body;
         if (!title) {
@@ -153,7 +153,7 @@ app.post('/tasks', requireAuth, async (req, res) => {
     }
 });
 
-app.put('/tasks/:id', requireAuth, async (req, res) => {
+app.put('/api/tasks/:id', requireAuth, async (req, res) => {
     try {
         const { id } = req.params;
         const updates = req.body;
@@ -201,7 +201,7 @@ app.put('/tasks/:id', requireAuth, async (req, res) => {
     }
 });
 
-app.delete('/tasks/:id', requireAuth, async (req, res) => {
+app.delete('/api/tasks/:id', requireAuth, async (req, res) => {
     try {
         const { id } = req.params;
         const result = await Task.findOneAndDelete({ _id: id, userId: req.userId });
